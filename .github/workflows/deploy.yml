@@ -42,8 +42,12 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         envs: AWS_REGION,ECR_REPOSITORY_URL
         script: |
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $(echo $ECR_REPOSITORY_URL | cut -d/ -f1)
-          docker pull $ECR_REPOSITORY_URL:latest
-          docker stop fastapi || true
-          docker rm fastapi || true
-          docker run -d --restart unless-stopped -p 3000:8000 --name fastapi $ECR_REPOSITORY_URL:latest
+          if ! command -v aws >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y awscli
+          fi
+          aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $(echo $ECR_REPOSITORY_URL | cut -d/ -f1)
+          sudo docker pull $ECR_REPOSITORY_URL:latest
+          sudo docker stop fastapi || true
+          sudo docker rm fastapi || true
+          sudo docker run -d --restart unless-stopped -p 3000:8000 --name fastapi $ECR_REPOSITORY_URL:latest
