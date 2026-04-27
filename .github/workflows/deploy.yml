@@ -46,4 +46,4 @@ jobs:
           docker pull $ECR_REPOSITORY_URL:latest
           docker stop fastapi || true
           docker rm fastapi || true
-          docker run -d --restart unless-stopped -p 3000:3000 --name fastapi $ECR_REPOSITORY_URL:latest
+          docker run -d --restart unless-stopped -p 3000:8000 --name fastapi $ECR_REPOSITORY_URL:latest
